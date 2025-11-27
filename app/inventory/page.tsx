@@ -1,7 +1,9 @@
-import React from 'react'
+import Sidebar from "../components/sidebar";
 
-export default function page() {
+export default async function InvetoryPage() {
   return (
-    <div>page</div>
-  )
+    <div className="min-h-screen bg-gray-50">
+      <Sidebar currentPath="/inventory" />
+    </div>
+  );
 }
