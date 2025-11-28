@@ -82,8 +82,12 @@ export default async function DashboardPage() {
         <div className="mb-8">
           <div className="flex items-center justify-between">
             <div>
-              <h1 className="text-2xl text-gray-500">Dashboard</h1>
-              <p>Welcome back! Here is an ovewrview of your inventory.</p>
+              <h1 className="text-2xl texxt-semibold text-gray-900">
+                Dashboard
+              </h1>
+              <p className="text-sm text-gray-500">
+                Welcome back! Here is an ovewrview of your inventory.
+              </p>
             </div>
           </div>
         </div>
