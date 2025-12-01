@@ -2,22 +2,14 @@
 
 import { createProduct } from "@/lib/actions/products";
 import { toast } from "sonner";
-import { useRouter } from "next/navigation";
 import Link from "next/link";
 
 export default function AddProductForm() {
-  const router = useRouter();
-
   async function handleAction(formData: FormData) {
     const result = await createProduct(formData);
 
     if (result?.success) {
       toast.success("Product created!");
-
-      // delay so the toast shows before redirect
-      setTimeout(() => {
-        router.push("/inventory");
-      }, 700);
     } else {
       toast.error("Failed to create product!");
     }

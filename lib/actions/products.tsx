@@ -1,4 +1,5 @@
 "use server";
+import { redirect } from "next/navigation";
 import getCurrentUser from "../auth";
 import { prisma } from "../prisma";
 import { nonnegative, z } from "zod";
@@ -40,6 +41,7 @@ export async function createProduct(formData: FormData) {
     await prisma.product.create({
       data: { ...parsed.data, userId: user.id },
     });
+    redirect("/invetory");
   } catch (error) {
     throw new Error("Faailed to create new Product");
   }
