@@ -3,23 +3,43 @@ import { prisma } from "@/lib/prisma";
 import Sidebar from "../components/sidebar";
 import getCurrentUser from "@/lib/auth";
 import DeleteButton from "../components/deleteButton";
+import Pagination from "../components/pagination";
 
 export default async function InvetoryPage({
   searchParams,
 }: {
-  searchParams: Promise<{ q?: string }>;
+  searchParams: Promise<{ q?: string; page?: string }>;
 }) {
   const user = await getCurrentUser();
   const userId = user.id;
 
   const params = await searchParams;
   const q = (params.q ?? "").trim();
+  const page = Math.max(1, Number(params.page ?? 1));
+
+  const pageSize = 10;
+
+  const where = {
+    userId,
+    ...(q ? { name: { contains: q, mode: "insensitive" as const } } : {}),
+  };
 
   const totalProducts = await prisma.product.findMany({
-    where: { userId, name: { contains: q, mode: "insensitive" } },
+    where,
   });
 
-  console.log(totalProducts);
+  const [totalCount, items] = await Promise.all([
+    prisma.product.count({ where }),
+    prisma.product.findMany({
+      where,
+      orderBy: { createdAt: "desc" },
+      skip: (page - 1) * pageSize,
+      take: pageSize,
+    }),
+  ]);
+
+  const totalPages = Math.max(1, Math.ceil(totalCount / pageSize));
+
   return (
     <div className="min-h-screen bg-gray-50">
       <Sidebar currentPath="/inventory" />
@@ -53,7 +73,7 @@ export default async function InvetoryPage({
             </form>
           </div>
 
-          {totalProducts.length == 0 ? (
+          {items.length == 0 ? (
             <p className="px-2 py-4  text-lg font-semibold text-gray-700 ">
               No such products found!
             </p>
@@ -84,7 +104,7 @@ export default async function InvetoryPage({
                 </thead>
 
                 <tbody className="bg-white divide-y divide-gray-200">
-                  {totalProducts.map((product, key) => (
+                  {items.map((product, key) => (
                     <tr key={key}>
                       <td className="px-6 py-4  text-sm font-medium text-gray-500 ">
                         {product.name}
@@ -108,6 +128,17 @@ export default async function InvetoryPage({
                   ))}
                 </tbody>
               </table>
+            </div>
+          )}
+
+          {totalPages > 1 && (
+            <div className="bg-white rounded-lg border border-gray-200 p-6">
+              <Pagination
+                currentPage={page}
+                totalPages={totalPages}
+                baseUrl="/inventory"
+                searchParams={{ q, pageSize: String(pageSize) }}
+              />
             </div>
           )}
         </div>
