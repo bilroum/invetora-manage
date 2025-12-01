@@ -1,8 +1,7 @@
 import Sidebar from "../components/sidebar";
-import Link from "next/link";
-import { createProduct } from "@/lib/actions/products";
-import { toast } from "sonner";
 import AddProductForm from "../components/addProductForm";
+import { Suspense } from "react";
+import FormSkeleton from "../components/addProductFormSkeleton";
 
 export default async function AddProductPage() {
   return (
@@ -24,7 +23,7 @@ export default async function AddProductPage() {
 
         <div className="max-w-2xl">
           <div className="bg-white rounded-lg border border-gray-200 p-6">
-            <AddProductForm />
+              <AddProductForm />
           </div>
         </div>
       </main>
